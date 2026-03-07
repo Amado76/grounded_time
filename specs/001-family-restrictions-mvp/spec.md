@@ -141,8 +141,8 @@ Parents can add children to their family and associate restrictions with specifi
 - **FR-009**: System MUST allow family members to invite others via email
 - **FR-010**: System MUST generate unique invite links that expire after 7 days
 - **FR-011**: System MUST automatically add invited users to the correct family when they sign up via invite link
-- **FR-012**: System MUST display all family members with their roles (creator, member)
-- **FR-013**: System MUST allow family creators to remove members from the family
+- **FR-012**: System MUST display all family members (no role distinction — all adults have equal access)
+- **FR-013**: System MUST allow any family member to remove other members from the family
 - **FR-013A**: System MUST store a `timezone` per family (default: `America/Sao_Paulo`) and use it for reminder scheduling and automatic restriction expiration
 
 **Children Management (Optional for MVP)**
@@ -153,17 +153,34 @@ Parents can add children to their family and associate restrictions with specifi
 
 **Restrictions Management**
 
-- **FR-017**: System MUST allow family members to create restrictions with required fields: title, start_at, end_at
-- **FR-018**: System MUST allow optional fields: description, child_id
-- **FR-019**: System MUST validate that end_at is after start_at (or allow null for indefinite)
+- **FR-017**: System MUST allow family members to create restrictions with required fields: title, category_id, starts_at
+- **FR-018**: System MUST allow optional fields: description, child_id, ends_at (null = indefinite)
+- **FR-019**: System MUST validate that ends_at is after starts_at when provided
 - **FR-020**: System MUST store who created the restriction (created_by)
-- **FR-021**: System MUST allow family members to edit restriction title, description, and end_at
+- **FR-021**: System MUST allow family members to edit restriction title, description, category, and ends_at
 - **FR-022**: System MUST allow family members to end a restriction early with "End Now" action
 - **FR-023**: System MUST store who ended the restriction (ended_by) and when (ended_at)
-- **FR-024**: System MUST automatically mark restrictions as ended when current time passes end_at
-- **FR-025**: System MUST display active restrictions (status=active) on dashboard
+- **FR-024**: System MUST automatically mark restrictions as ended when current time passes ends_at
+- **FR-024A**: System MUST support scheduled restrictions (status=scheduled) where starts_at is in the future; scheduler activates them when starts_at arrives
+- **FR-025**: System MUST display active restrictions (status=active) on dashboard with a live countdown timer showing time remaining
+- **FR-025A**: System MUST display scheduled restrictions (status=scheduled) in a separate "Scheduled" tab on the dashboard
 - **FR-026**: System MUST display historical restrictions (status=ended) in history view
-- **FR-027**: System MUST display each restriction with: title, description, creator name, start time, end time, status
+- **FR-027**: System MUST display each restriction with: title, category icon, description, creator name, start time, end time, status
+- **FR-027A**: System MUST allow filtering restrictions by child on the dashboard and history views
+
+**Restriction Categories**
+
+- **FR-041**: System MUST provide a set of built-in restriction categories with icons (e.g. Gaming, Social Media, Screen Time, Phone, Tablet, Going Out, Other)
+- **FR-042**: System MUST allow family members to create custom restriction categories with a name and a selected icon from a predefined icon set
+- **FR-043**: System MUST allow family members to edit or delete their custom categories (system defaults cannot be deleted)
+- **FR-044**: System MUST display category icon alongside restriction title throughout the UI
+
+**Analytics**
+
+- **FR-045**: System MUST provide an Analytics page showing: total active restrictions, restrictions this week, restriction compliance rate
+- **FR-046**: System MUST display a breakdown of restrictions by category (e.g. Gaming 35%, Social Media 28%) for the last 30 days
+- **FR-047**: System MUST display a weekly frequency chart showing restrictions per day of week per child
+- **FR-048**: System SHOULD use Chart.js (loaded via CDN) for rendering charts on the Analytics page
 
 **Notifications**
 
@@ -179,7 +196,7 @@ Parents can add children to their family and associate restrictions with specifi
 
 - **FR-034A**: System MUST support UI localization in Portuguese (`pt-BR`), English (`en`), and Spanish (`es`)
 - **FR-034B**: System MUST allow each user to select preferred language in settings
-- **FR-034C**: System SHOULD default new users to Portuguese (`pt-BR`) and provide fallback to English (`en`) when translation keys are missing
+- **FR-034C**: System SHOULD default new users to English (`en`) and provide fallback to English (`en`) when translation keys are missing
 
 **Observability & Monitoring (MVP)**
 
@@ -267,14 +284,15 @@ Stores notification preferences per user. Attributes: user_id, email_enabled (bo
 ## Out of Scope (for MVP)
 
 - Multiple families per user
-- Role-based permissions within family (all members have equal access for MVP)
-- Restriction templates or presets
+- Role-based permissions within family (all adults have equal access — no ADMIN/EDITOR distinction)
+- Family data sync button (sync is automatic via shared database)
 - Photo attachments to restrictions
 - Comments or discussions on restrictions
 - Geolocation-based reminders
 - Integration with parental control apps
-- Reward systems (only restrictions, no positive reinforcement tracking)
+- Reward systems / positive milestones / streaks / gamification
 - Teacher or school integration
+- Real-time countdown via WebSockets (countdown uses client-side JS with server-provided timestamp)
 - Social features (sharing restrictions with other families)
 - AI suggestions for restriction timing or duration
 - Gamification elements

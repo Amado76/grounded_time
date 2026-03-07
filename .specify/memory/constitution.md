@@ -101,15 +101,19 @@ The dashboard MUST prioritize clarity over density.
 
 ---
 
-### V. Avoid unnecessary dependencies
+### V. Use dependencies with criteria, not prohibition
 
-New dependencies MUST only be introduced if they clearly improve:
+External packages and libraries are allowed when they clearly improve:
 
 - reliability
 - development speed
 - security
 
-**Rationale**: Each dependency adds maintenance burden and potential attack surface. The benefit must justify the cost.
+They MUST NOT be introduced for things Laravel already handles natively. Prefer CDN-loaded frontend libraries over npm packages while Node/npm is not part of the build pipeline.
+
+Approved for this project: Chart.js (via CDN, for analytics charts).
+
+**Rationale**: The goal is to avoid dependency abuse, not all dependencies. Each new dependency must justify its cost with a clear benefit.
 
 ---
 

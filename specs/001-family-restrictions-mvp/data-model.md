@@ -22,7 +22,7 @@ Relationships:
 - name
 - email
 - password
-- locale (string, nullable, default: pt_BR)
+- locale (string, nullable, default: en)
 - email_verified_at, remember_token
 - created_at, updated_at
 
@@ -37,8 +37,9 @@ Relationships:
 
 - family_id
 - user_id
-- role (enum: creator, member)
 - joined_at
+
+Note: No role distinction — all family members have equal access.
 
 ### FamilyInvite
 
@@ -49,6 +50,22 @@ Relationships:
 - expires_at
 - accepted_at (nullable)
 - created_at
+
+### RestrictionCategory
+
+- id
+- family_id (nullable — null means system default, visible to all families)
+- name (required, max 60)
+- icon (string — identifier from predefined icon set, e.g. "gamepad", "phone", "tv")
+- is_system (boolean, default false — system categories cannot be deleted)
+- created_at, updated_at
+
+Relationships:
+
+- belongs to Family (nullable)
+- has many Restrictions
+
+System defaults (seeded): Gaming, Social Media, Screen Time, Phone, Tablet, Going Out, Other
 
 ### Child (optional MVP)
 
@@ -68,26 +85,29 @@ Relationships:
 - id
 - family_id
 - child_id (nullable)
-- title (required)
+- category_id (FK to restriction_categories, required)
+- title (required, max 120)
 - description (nullable)
-- status (enum: active, ended)
-- starts_at
-- ends_at (nullable, null means indefinite)
+- status (enum: scheduled, active, ended)
+- starts_at (timestamp)
+- ends_at (nullable timestamp — null means indefinite)
 - created_by (user_id)
 - ended_by (nullable user_id)
-- ended_at (nullable)
+- ended_at (nullable timestamp)
 - created_at, updated_at
 
 Relationships:
 
 - belongs to Family
+- belongs to RestrictionCategory
 - belongs to Child (optional)
 - belongs to User (creator)
 - belongs to User (ender)
 
 State transitions:
 
-- active -> ended (manual end or auto-expire)
+- scheduled -> active (scheduler activates when starts_at arrives)
+- active -> ended (manual "End Now" or auto-expire when ends_at passes)
 
 ### RestrictionEvent (optional)
 
@@ -123,14 +143,18 @@ State transitions:
 - User email: valid format, unique.
 - Password: min 8 chars.
 - Child name: required, max length 100.
+- RestrictionCategory name: required, max length 60.
+- RestrictionCategory icon: required, must be in predefined icon set.
 - Restriction title: required, max length 120.
+- Restriction category_id: required, must belong to family or be a system category.
 - Restriction starts_at: required.
 - Restriction ends_at: nullable, must be after starts_at when provided.
 - Invite token: unique, expires in 7 days.
 
 ## Indexing Suggestions
 
-- restrictions: index on family_id, status, ends_at
+- restriction_categories: index on family_id, is_system
+- restrictions: index on family_id, status, ends_at, starts_at
 - family_invites: index on token, expires_at
 - notification_preferences: index on user_id
 - export_requests: index on requester_id, status

@@ -94,7 +94,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T038 [US2] Create restrictions migration in database/migrations/YYYY_MM_DD_create_restrictions_table.php
+- [ ] T038 [US2] Create restriction_categories migration in database/migrations/YYYY_MM_DD_create_restriction_categories_table.php
+- [ ] T038A [US2] Seed system default categories (Gaming, Social Media, Screen Time, Phone, Tablet, Going Out, Other) in database/seeders/RestrictionCategorySeeder.php
+- [ ] T038B [P] [US2] Create RestrictionCategory model in app/Models/RestrictionCategory.php
+- [ ] T038C [US2] Create restrictions migration in database/migrations/YYYY_MM_DD_create_restrictions_table.php (include category_id, status enum: scheduled/active/ended)
 - [ ] T039 [P] [US2] Create Restriction model in app/Models/Restriction.php
 - [ ] T040 [P] [US2] Create StoreRestrictionRequest in app/Http/Requests/StoreRestrictionRequest.php
 - [ ] T041 [P] [US2] Create UpdateRestrictionRequest in app/Http/Requests/UpdateRestrictionRequest.php
@@ -102,9 +105,10 @@
 - [ ] T043 [US2] Implement RestrictionService in app/Services/RestrictionService.php
 - [ ] T044 [US2] Create RestrictionController in app/Http/Controllers/RestrictionController.php
 - [ ] T045 [US2] Add restriction routes in routes/web.php
-- [ ] T046 [P] [US2] Create restriction views in resources/views/restrictions/\*.blade.php
-- [ ] T047 [US2] Add AutoEndRestrictionsJob in app/Jobs/AutoEndRestrictionsJob.php (use family timezone)
-- [ ] T048 [US2] Register auto-end schedule in app/Console/Kernel.php (respect family timezone)
+- [ ] T046 [P] [US2] Create restriction views in resources/views/restrictions/\*.blade.php (include category icon selector and scheduled start date)
+- [ ] T046A [US2] Add vanilla JS countdown timer to active restriction cards (reads data-ends-at timestamp attribute, no extra dependency)
+- [ ] T047 [US2] Add AutoEndRestrictionsJob in app/Jobs/AutoEndRestrictionsJob.php (auto-end active restrictions past ends_at, activate scheduled restrictions past starts_at, respect family timezone)
+- [ ] T048 [US2] Register auto-end/auto-activate schedule in app/Console/Kernel.php (runs every minute)
 
 **Checkpoint**: User Story 2 is fully functional and testable independently
 
@@ -123,11 +127,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T051 [US3] Add query scopes in app/Models/Restriction.php for active and ended
+- [ ] T051 [US3] Add query scopes in app/Models/Restriction.php for active, scheduled, and ended
 - [ ] T052 [US3] Add history controller action in app/Http/Controllers/RestrictionController.php
 - [ ] T053 [US3] Add history route in routes/web.php
-- [ ] T054 [P] [US3] Add history view in resources/views/restrictions/history.blade.php
-- [ ] T055 [US3] Update dashboard view in resources/views/restrictions/index.blade.php
+- [ ] T054 [P] [US3] Add history view in resources/views/restrictions/history.blade.php (with child filter)
+- [ ] T055 [US3] Update dashboard view in resources/views/restrictions/index.blade.php (Active / Scheduled / Completed tabs + child filter)
 
 **Checkpoint**: User Story 3 is fully functional and testable independently
 
@@ -190,6 +194,52 @@
 
 ---
 
+## Phase 7B: Restriction Categories Management
+
+**Goal**: Family members can manage custom restriction categories with icons
+
+**Independent Test**: Create a custom category, use it in a restriction, verify icon displays throughout UI
+
+### Red: Tests for Categories (WRITE FIRST - MUST FAIL)
+
+- [ ] T098 [P] Feature test for category CRUD in tests/Feature/RestrictionCategoryTest.php
+- [ ] T099 [P] Unit test for category validation (system categories cannot be deleted) in tests/Unit/RestrictionCategoryTest.php
+
+### Implementation for Categories
+
+- [ ] T100 [P] Create RestrictionCategoryController in app/Http/Controllers/RestrictionCategoryController.php
+- [ ] T101 [P] Create StoreRestrictionCategoryRequest in app/Http/Requests/StoreRestrictionCategoryRequest.php
+- [ ] T102 [P] Create UpdateRestrictionCategoryRequest in app/Http/Requests/UpdateRestrictionCategoryRequest.php
+- [ ] T103 Add category routes in routes/web.php (GET/POST /categories, PATCH/DELETE /categories/{category})
+- [ ] T104 [P] Create category views in resources/views/categories/\*.blade.php (list + form with icon picker)
+- [ ] T105 Add predefined icon set list in config/icons.php (identifiers mapped to SVG paths or Heroicons names)
+
+**Checkpoint**: Categories are manageable and usable in restriction forms
+
+---
+
+## Phase 7C: Analytics
+
+**Goal**: Users can view family restriction statistics and charts
+
+**Independent Test**: Create several restrictions across days and children, verify analytics page shows correct counts and chart data
+
+### Red: Tests for Analytics (WRITE FIRST - MUST FAIL)
+
+- [ ] T106 [P] Feature test for analytics page in tests/Feature/AnalyticsTest.php
+- [ ] T107 [P] Unit test for AnalyticsService data aggregation in tests/Unit/AnalyticsServiceTest.php
+
+### Implementation for Analytics
+
+- [ ] T108 Implement AnalyticsService in app/Services/AnalyticsService.php (active count, weekly count, compliance rate, breakdown by category, frequency by day)
+- [ ] T109 Create AnalyticsController in app/Http/Controllers/AnalyticsController.php
+- [ ] T110 Add analytics route in routes/web.php (GET /analytics)
+- [ ] T111 [P] Create analytics view in resources/views/analytics/index.blade.php (stats cards + Chart.js charts loaded via CDN)
+
+**Checkpoint**: Analytics page shows live data with charts
+
+---
+
 ## Phase 8: Polish & Cross-Cutting Concerns
 
 **Purpose**: Cross-cutting requirements not owned by a single user story
@@ -218,8 +268,10 @@
 
 - US1 blocks US2 and US3 (auth + family context required)
 - US2 blocks US3 (needs restrictions data)
+- US2 blocks Categories Phase 7B (restriction form requires category model)
 - US4 depends on US2 (notifications tied to restriction lifecycle)
 - US5 can run after US1 but integrates with US2
+- Analytics Phase 7C depends on US2 + US5 (needs restrictions and children data)
 - Cross-cutting phase depends on US1 (auth) and US2 (restrictions)
 
 ---
@@ -236,8 +288,9 @@
 
 ## Implementation Strategy
 
-- Start with MVP scope: US1 -> US2 -> US3
+- Start with MVP core: US1 -> US2 (with categories + countdown) -> US3
 - Add notifications (US4) once restriction lifecycle is stable
 - Add children management (US5) after core flows are tested
+- Add analytics (Phase 7C) after US5 (needs children data for charts)
 - Implement GDPR and localization settings in final polish phase
-- Optional browser push only if dependency is approved and time remains
+- Chart.js loaded via CDN — no npm required for analytics charts
