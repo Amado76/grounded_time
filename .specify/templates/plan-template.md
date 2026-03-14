@@ -12,41 +12,26 @@
 ## Technical Context
 
 <!--
-  ACTION REQUIRED: Update values below based on feature requirements.
-  Default values reflect GroundedTime constitution (Laravel web app).
+  ACTION REQUIRED: Replace the content in this section with the technical details
+  for the project. The structure here is presented in advisory capacity to guide
+  the iteration process.
 -->
 
-**Language/Version**: PHP 8+  
-**Primary Dependencies**: Laravel, Blade templates, TailwindCSS  
-**Storage**: PostgreSQL  
-**Testing**: PHPUnit, Laravel test helpers  
-**Target Platform**: Web (responsive for mobile)  
-**Project Type**: web-application (Laravel MVC + Services)  
-**Performance Goals**: Standard web response times (<200ms p95 for core actions)  
-**Constraints**: Mobile-first UI, simple architecture (no microservices)  
-**Scale/Scope**: Small household use (dozens of users per family, not high-traffic)
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
-_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Reference: `.specify/memory/constitution.md`
-
-**Required checks for GroundedTime**:
-
-- [ ] **Simplicity**: Does this feature add unnecessary complexity? Can it be simpler?
-- [ ] **Readable code**: Is the approach clear and maintainable using Laravel conventions?
-- [ ] **Mobile-first**: Is the UI responsive and mobile-friendly?
-- [ ] **User experience**: Does the feature reduce mental load and provide immediate clarity?
-- [ ] **Dependencies**: Are new dependencies justified (reliability, speed, security)?
-- [ ] **TDD (NON-NEGOTIABLE)**: Will tests be written FIRST before implementation? Is Red-Green-Refactor cycle planned?
-- [ ] **Architecture**: Does it follow Controller → Service → Model pattern?
-- [ ] **Thin controllers**: Controllers only handle HTTP, validation, response formatting?
-- [ ] **Business logic in Services**: Core logic lives in Service classes, not Controllers or Models?
-- [ ] **Definition of Done**: Plans include TDD workflow, migrations, models, controllers, services, validation, responsive UI, all tests passing?
-
-**Notes on complexity**:
-[Document any justified complexity or unusual architectural decisions]
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -63,59 +48,57 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-
 <!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete paths
-  for this specific feature. Expand with exact filenames where possible.
-  For GroundedTime, use Laravel structure.
+  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
+  for this feature. Delete unused options and expand the chosen structure with
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
 -->
 
 ```text
-# Laravel structure (GroundedTime default)
-app/
-├── Http/
-│   ├── Controllers/
-│   │   └── [FeatureController.php]  # Thin controllers for HTTP handling
-│   └── Requests/
-│       └── [FeatureRequest.php]     # Form validation
-├── Models/
-│   └── [Entity.php]                  # Eloquent models
-├── Services/
-│   └── [FeatureService.php]          # Business logic
-└── Notifications/
-    └── [FeatureNotification.php]     # Laravel notifications
-
-database/
-├── migrations/
-│   └── [YYYY_MM_DD_create_table.php]
-└── seeders/
-
-resources/
-└── views/
-    ├── [feature]/
-    │   ├── index.blade.php           # List view
-    │   ├── show.blade.php            # Detail view
-    │   └── _form.blade.php           # Form partial
-    └── layouts/
-        └── app.blade.php
-
-routes/
-└── web.php                           # Route definitions
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+src/
+├── models/
+├── services/
+├── cli/
+└── lib/
 
 tests/
-├── Feature/                          # Feature tests (HTTP-level)
-│   └── [FeatureTest.php]
-└── Unit/                             # Unit tests (Service/Model)
-    └── [ServiceTest.php]
+├── contract/
+├── integration/
+└── unit/
+
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
+│   ├── services/
+│   └── api/
+└── tests/
+
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document which Laravel components are needed for this feature]
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
-| -------------------------- | ------------------ | ------------------------------------ |
-| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

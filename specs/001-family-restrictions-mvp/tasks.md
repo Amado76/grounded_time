@@ -18,12 +18,12 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Confirm MySQL connection defaults in config/database.php
-- [ ] T002 Create base Blade layout in resources/views/layouts/app.blade.php
-- [ ] T003 [P] Add locale folders in resources/lang/pt_BR, resources/lang/en, resources/lang/es
-- [ ] T004 Add locale middleware in app/Http/Middleware/SetLocale.php and register in app/Http/Kernel.php
-- [ ] T005 [P] Add basic navigation partial in resources/views/layouts/\_nav.blade.php
-- [ ] T006 Configure default locale and fallback in config/app.php (pt_BR + en)
+- [x] T001 Confirm MySQL connection defaults in config/database.php
+- [x] T002 Create base Blade layout in resources/views/layouts/app.blade.php
+- [x] T003 [P] Add locale folders in resources/lang/pt_BR, resources/lang/en, resources/lang/es
+- [x] T004 Add locale middleware in app/Http/Middleware/SetLocale.php and register in app/Http/Kernel.php
+- [x] T005 [P] Add basic navigation partial in resources/views/layouts/\_nav.blade.php
+- [x] T006 Configure default locale and fallback in config/app.php (pt_BR + en)
 
 ---
 
